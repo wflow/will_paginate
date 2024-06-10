@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # We test against other Rails versions, too. See `environments/`
-rails_version = '~> 7.1.3'
+rails_version = '~> 7.0.2'
 
 gem 'activerecord', rails_version
 gem 'actionpack',   rails_version
