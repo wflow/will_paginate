@@ -2,21 +2,11 @@
 # vi:ft=sh:
 set -e
 
-if type -p brew >/dev/null; then
-  brew bundle --no-upgrade
-  mysql_prefix="$(brew --prefix mysql@5.7)"
-  openssl_prefix="$(brew --prefix openssl@1.1)"
-  bundle config set --local build.mysql2 --with-mysql-config="${mysql_prefix}/bin/mysql_config" --with-ldflags="-L${openssl_prefix}/lib"
+brew install libpq
+brew install --skip-post-install mysql@5.7
 
-  while [ ! -e /tmp/mysql.sock ] && [ ! -e /var/run/mysql5/mysqld.sock ]; do
-    echo "Waiting for mysql to start up ..." >&2
-    sleep 1
-  done
-fi
-
-mysql -u root -e 'CREATE DATABASE IF NOT EXISTS will_paginate;'
-psql --dbname will_paginate -c '' 2>/dev/null || createdb will_paginate
-
-bundle config set path "$PWD/vendor/bundle"
+bundle config --local build.mysql2 -- "$(ruby -r rbconfig -e 'puts RbConfig::CONFIG["configure_args"]' | xargs -n1 | grep with-openssl-dir)"
+bundle config --local build.pg -- --with-pg-config=$(brew --prefix libpq)/bin/pg_config
+bundle config --local path "$PWD/vendor/bundle"
 bundle install
 bundle binstubs rspec-core
