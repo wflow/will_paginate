@@ -16,7 +16,7 @@ module WillPaginate
             # procs in defaults array were not supported back then
             defaults << yield(defaults.first, options)
           else
-            defaults << Proc.new
+            defaults << Proc.new {}
           end
         end
         ::I18n.translate(defaults.shift, options.merge(:default => defaults, :scope => :will_paginate))
